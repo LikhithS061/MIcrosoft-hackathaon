@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECO GUARD — Minimalist Risk Canvas</title>
+  <meta name="description" content="ECO GUARD: Minimalist material-glass interface for multi-agent risk intelligence.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div id="toast-container" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">🛡️</div>
+        <div class="brand-text">
+          <div class="brand-title">ECO GUARD</div>
+          <div class="brand-subtitle">Zero-Cognitive-Overload Presentation Interface</div>
+        </div>
+      </div>
+
+      <div class="setup-bar" aria-label="Ingestion setup">
+        <div id="upload-zone" class="upload-pill" role="button" tabindex="0" aria-label="Upload telemetry file">
+          Upload telemetry
+        </div>
+        <div class="preset-select">
+          <label for="incident-select">Preset</label>
+          <select id="incident-select">
+            <option value="" disabled selected>Select scenario...</option>
+          </select>
+        </div>
+        <button id="inject-btn" class="btn btn-primary">Ingest</button>
+      </div>
+    </header>
+
+    <main class="main-canvas">
+      <section class="status-pill" id="system-status-pill" aria-live="polite">
+        <span class="status-dot" id="system-status-dot"></span>
+        <span id="system-status-text">System idle — awaiting ingestion</span>
+      </section>
+
+      <section class="scenario-row" aria-label="Scenario presets">
+        <button class="scenario-btn" data-scenario="A">Scenario A · Nominal</button>
+        <button class="scenario-btn" data-scenario="B">Scenario B · Severe Contamination</button>
+        <button class="scenario-btn" data-scenario="C">Scenario C · Agent Dispute</button>
+      </section>
+
+      <section class="glass-card basic-card">
+        <div class="basic-header">
+          <div>
+            <div class="basic-title">Basic Decision Interface</div>
+            <div class="basic-subtitle">Plain-language summary with minimal metrics.</div>
+          </div>
+          <span id="decision-status-badge" class="tag tag-muted">Awaiting</span>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-block">
+            <div class="metric-label">Hazard Index (H)</div>
+            <div class="metric-value-row">
+              <div class="metric-value" id="hazard-value">0.0%</div>
+              <span id="hazard-status-label" class="tag tag-muted">Awaiting</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="hazard-progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="metric-block">
+            <div class="metric-label">Consensus Variance (σ²H)</div>
+            <div class="metric-value-row">
+              <div class="metric-value" id="variance-value">0.0</div>
+              <span id="variance-status-label" class="tag tag-muted">Awaiting</span>
+            </div>
+            <div class="soft-pill amber" id="variance-state-pill">High Agreement</div>
+          </div>
+
+          <div class="metric-block">
+            <div class="metric-label">Circular Opportunity Score (S)</div>
+            <div class="metric-value-row">
+              <div class="metric-value" id="opportunity-value">0.0</div>
+              <span id="opportunity-status-label" class="tag tag-muted">Awaiting</span>
+            </div>
+            <div class="soft-pill blue" id="opportunity-state-pill">No Opportunity</div>
+          </div>
+        </div>
+
+        <div class="mitigation-row">
+          <div class="mitigation-label">Mitigation Plan</div>
+          <div class="mitigation-text" id="decision-reason-text">Awaiting consensus analysis...</div>
+        </div>
+
+        <div class="action-row">
+          <button id="btn-approve" class="btn btn-success">Approve Emergency Protocol</button>
+          <button id="btn-reject" class="btn btn-secondary">Dismiss / Re-evaluate</button>
+        </div>
+      </section>
+
+      <section class="advanced-toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="toggle-advanced-input">
+          <span class="toggle-track"></span>
+          <span class="toggle-label">View Advanced Analysis</span>
+        </label>
+      </section>
+
+      <section class="glass-card advanced-section hidden" id="advanced-tabs">
+        <div class="tab-headers" role="tablist">
+          <button class="tab-btn active" role="tab" aria-selected="true" data-tab="agent-tab" id="tb-agent">Agent Map</button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="math-tab" id="tb-math">Mathematical Breakdown</button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="compliance-tab" id="tb-compliance">Regulatory Check</button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="history-tab" id="tb-history">SQLite Logs</button>
+        </div>
+
+        <div class="tab-content-area">
+          <div class="tab-pane active" id="agent-tab" role="tabpanel" aria-labelledby="tb-agent">
+            <div class="agent-timeline" id="agent-timeline"></div>
+            <div class="agent-cards" id="agents-report-grid"></div>
+          </div>
+
+          <div class="tab-pane" id="math-tab" role="tabpanel" aria-labelledby="tb-math">
+            <div class="table-wrapper">
+              <table class="data-table" aria-label="Mathematical Breakdown">
+                <thead>
+                  <tr>
+                    <th>Agent ID</th>
+                    <th>Hazard (C_i)</th>
+                    <th>Confidence (α_i)</th>
+                    <th>Domain Weight (w_i)</th>
+                    <th>Effective Weight</th>
+                    <th>Weighted Contribution</th>
+                  </tr>
+                </thead>
+                <tbody id="math-ledger-body">
+                  <tr><td colspan="6" class="text-center opacity-60">No data yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="compliance-tab" role="tabpanel" aria-labelledby="tb-compliance">
+            <div class="table-wrapper">
+              <table class="data-table" aria-label="Regulatory Check">
+                <thead>
+                  <tr>
+                    <th>Reg ID</th>
+                    <th>Title</th>
+                    <th>Section</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Implications</th>
+                  </tr>
+                </thead>
+                <tbody id="regulatory-table-body">
+                  <tr><td colspan="6" class="text-center opacity-60">No regulatory citations loaded.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="history-tab" role="tabpanel" aria-labelledby="tb-history">
+            <div class="table-wrapper">
+              <table class="data-table" aria-label="SQLite Logs">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Incident</th>
+                    <th>Location</th>
+                    <th>Severity</th>
+                    <th>Hazard (H)</th>
+                    <th>Decision</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body">
+                  <tr><td colspan="7" class="text-center opacity-60">No logs found.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-overlay hidden" id="hitl-overlay" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="hitl-title">
+      <div class="modal-title" id="hitl-title">Operator Action Required</div>
+      <div class="modal-text" id="hitl-reason-text">
+        Pipeline paused: operator decision required.
+      </div>
+      <div class="modal-actions">
+        <button id="btn-approve-modal" class="btn btn-success">Approve</button>
+        <button id="btn-reject-modal" class="btn btn-danger">Dismiss / Re-evaluate</button>
+        <button id="btn-investigate" class="btn btn-warning">Investigate</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
